@@ -14,6 +14,7 @@ import {
   SidebarMenuButton,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { UserNav } from '@/components/user-nav';
 import { Button } from '@/components/ui/button';
@@ -26,13 +27,32 @@ const navItems = [
   { href: '/dashboard/profile', icon: User, label: 'Profile' },
 ];
 
+function DashboardHeader() {
+  const { isMobile } = useSidebar();
+
+  return (
+    <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+      {isMobile ? (
+        <SidebarTrigger className="md:hidden"/>
+      ) : (
+        <div className="hidden md:block">
+          <SidebarTrigger />
+        </div>
+      )}
+      <div className="w-full flex-1">
+        {/* Can add search or other header elements here */}
+      </div>
+      <UserNav />
+    </header>
+  );
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-background">
-        <Sidebar>
+        <Sidebar side="left" variant="sidebar" collapsible="icon">
           <SidebarHeader className="flex items-center justify-between">
             <Logo />
             <div className="md:hidden">
@@ -54,19 +74,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
-        <SidebarInset>
-          <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
-            <SidebarTrigger />
-            <div className="w-full flex-1">
-              {/* Can add search or other header elements here */}
-            </div>
-            <UserNav />
-          </header>
-          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-            {children}
-          </main>
-        </SidebarInset>
-      </div>
+        <div className='flex-1 flex flex-col'>
+            <DashboardHeader />
+            <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
+                {children}
+            </main>
+        </div>
     </SidebarProvider>
   );
 }
