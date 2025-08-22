@@ -14,9 +14,9 @@ import {
   SidebarMenuButton,
   SidebarProvider,
   SidebarTrigger,
-  SidebarRail
 } from '@/components/ui/sidebar';
 import { UserNav } from '@/components/user-nav';
+import { Button } from '@/components/ui/button';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -33,8 +33,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <SidebarProvider>
       <div className="min-h-screen bg-background">
         <Sidebar>
-          <SidebarHeader>
+          <SidebarHeader className="flex items-center justify-between">
             <Logo />
+            <div className="md:hidden">
+              <SidebarTrigger />
+            </div>
           </SidebarHeader>
           <SidebarContent>
             <SidebarMenu>
@@ -53,7 +56,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </Sidebar>
         <SidebarInset>
           <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
-            <SidebarTrigger className="md:hidden" />
+            <SidebarTrigger />
             <div className="w-full flex-1">
               {/* Can add search or other header elements here */}
             </div>
