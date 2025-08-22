@@ -67,15 +67,15 @@ export default function ProfilePage() {
           <CardDescription>Your account verification status.</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center gap-4">
-          <kyc.Icon className={`w-10 h-10 ${kycInfo.className}`} />
+          <kycInfo.Icon className={`w-10 h-10 ${kycInfo.className}`} />
           <div>
             <Badge variant={kycInfo.variant} className={`mb-2 ${kycInfo.badgeClass}`}>{mockUser.kycStatus}</Badge>
             <p className="text-sm text-muted-foreground">{kycInfo.text}</p>
           </div>
         </CardContent>
         {mockUser.kycStatus === 'Unverified' && (
-            <CardFooter>
-                <Button variant="outline">Start Verification Process</Button>
+            <CardFooter className="border-t pt-4">
+                <Button>Start Verification Process</Button>
             </CardFooter>
         )}
       </Card>

@@ -25,7 +25,7 @@ export const mockUser: User = {
   uniqueId: 'alex-doe-123',
   balanceUSD: 1000.00,
   balanceUSDC: 5420.50,
-  kycStatus: 'Verified',
+  kycStatus: 'Unverified',
 };
 
 export const mockTransactions: Transaction[] = [
