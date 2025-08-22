@@ -15,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarProvider,
   SidebarTrigger,
+  SidebarRail
 } from '@/components/ui/sidebar';
 import { UserNav } from '@/components/user-nav';
 
@@ -32,7 +33,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <div className="min-h-screen bg-background">
-        <Sidebar>
+        <Sidebar collapsible="icon">
+          <SidebarRail />
           <SidebarHeader>
             <Logo />
           </SidebarHeader>
