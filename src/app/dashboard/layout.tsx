@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ArrowRightLeft, History, LayoutDashboard, User, Wallet } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Logo } from '@/components/logo';
 import {
   Sidebar,
@@ -33,8 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <div className="min-h-screen bg-background">
-        <Sidebar collapsible="icon">
-          <SidebarRail />
+        <Sidebar>
           <SidebarHeader>
             <Logo />
           </SidebarHeader>
