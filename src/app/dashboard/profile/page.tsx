@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { mockUser } from '@/lib/data';
 import { CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
+import Link from 'next/link';
 
 const kycComponents = {
   Verified: {
@@ -75,7 +76,9 @@ export default function ProfilePage() {
         </CardContent>
         {mockUser.kycStatus === 'Unverified' && (
             <CardFooter className="border-t pt-4">
-                <Button>Start Verification Process</Button>
+                <Button asChild>
+                  <Link href="/dashboard/kyc">Start Verification Process</Link>
+                </Button>
             </CardFooter>
         )}
       </Card>
