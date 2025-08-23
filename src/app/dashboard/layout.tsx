@@ -33,7 +33,7 @@ function DashboardHeader() {
     <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
         <SidebarTrigger className="md:hidden"/>
         <div className="w-full flex-1">
-           <SidebarTrigger className="hidden md:block"/>
+        <SidebarTrigger className="hidden md:block"/>
         </div>
       <UserNav />
     </header>

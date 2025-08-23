@@ -38,7 +38,7 @@ export default function DashboardPage() {
               ${mockUser.balanceUSDC.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <p className="text-xs text-muted-foreground">
-                ~ ${balanceMXN.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
+              ~ ${balanceMXN.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
             </p>
           </CardContent>
         </Card>
@@ -58,22 +58,22 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="flex-grow flex items-center">
             <div className="w-full grid grid-cols-3 gap-2">
-              <Button asChild variant="outline" size="sm" className="flex-col h-auto py-2">
+              <Button  variant="outline" size="sm" className="flex-col h-auto py-2">
                 <Link href="/dashboard/send">
                   <ArrowUpRight className="h-5 w-5 mb-1" />
                   <span>Send</span>
                 </Link>
               </Button>
-               <Button asChild variant="outline" size="sm" className="flex-col h-auto py-2">
+              <Button  variant="outline" size="sm" className="flex-col h-auto py-2">
                 <Link href="/dashboard/wallet">
                   <Download className="h-5 w-5 mb-1" />
                   <span>Receive</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="sm" className="flex-col h-auto py-2">
+              <Button  variant="outline" size="sm" className="flex-col h-auto py-2">
                 <Link href="/dashboard/wallet">
                   <PlusCircle className="h-5 w-5 mb-1" />
-                 <span>Add Funds</span>
+                  <span>Add Funds</span>
                 </Link>
               </Button>
             </div>
@@ -88,8 +88,8 @@ export default function DashboardPage() {
               <CardTitle>Recent Transactions</CardTitle>
               <CardDescription>A list of your most recent transactions.</CardDescription>
             </div>
-            <Button asChild variant="outline" size="sm">
-                <Link href="/dashboard/transactions">View all</Link>
+            <Button  variant="outline" size="sm">
+              <Link href="/dashboard/transactions">View all</Link>
             </Button>
           </div>
         </CardHeader>

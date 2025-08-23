@@ -23,8 +23,6 @@ export default function SendPage() {
   const [amount, setAmount] = useState('');
   const [recipientIdentifier, setRecipientIdentifier] = useState('');
   const [isSending, setIsSending] = useState(false);
-  
-  
   const parsedAmount = parseFloat(amount) || 0;
   const commission = parsedAmount * COMMISSION_RATE;
   const totalDeducted = parsedAmount + commission;
