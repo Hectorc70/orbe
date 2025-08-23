@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpRight, PlusCircle, BadgePercent } from 'lucide-react';
+import { ArrowUpRight, PlusCircle, ArrowDownToDot, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,9 +8,12 @@ import { mockTransactions, mockUser } from '@/lib/data';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
+const USDC_TO_MXN_RATE = 16.50;
+
 export default function DashboardPage() {
   const recentTransactions = mockTransactions.slice(0, 5);
-  
+  const balanceMXN = mockUser.balanceUSDC * USDC_TO_MXN_RATE;
+
   const getStatusBadgeVariant = (status: 'Completed' | 'Pending' | 'Failed') => {
     switch (status) {
       case 'Completed':
@@ -34,7 +37,9 @@ export default function DashboardPage() {
             <div className="text-2xl font-bold">
               ${mockUser.balanceUSDC.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <p className="text-xs text-muted-foreground">Simulated Monad Testnet balance</p>
+            <p className="text-xs text-muted-foreground">
+                ~ ${balanceMXN.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -48,19 +53,27 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         <Card className="flex flex-col">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader>
             <CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="flex-grow flex items-center">
-            <div className="w-full grid grid-cols-2 gap-4">
-              <Button asChild variant="outline">
+            <div className="w-full grid grid-cols-3 gap-2">
+              <Button asChild variant="outline" size="sm" className="flex-col h-auto py-2">
                 <Link href="/dashboard/send">
-                  <ArrowUpRight className="mr-2 h-4 w-4" /> Send
+                  <ArrowUpRight className="h-5 w-5 mb-1" />
+                  <span>Send</span>
                 </Link>
               </Button>
-              <Button asChild>
+               <Button asChild variant="outline" size="sm" className="flex-col h-auto py-2">
                 <Link href="/dashboard/wallet">
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add Funds
+                  <Download className="h-5 w-5 mb-1" />
+                  <span>Receive</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="flex-col h-auto py-2">
+                <Link href="/dashboard/wallet">
+                  <PlusCircle className="h-5 w-5 mb-1" />
+                 <span>Add Funds</span>
                 </Link>
               </Button>
             </div>
