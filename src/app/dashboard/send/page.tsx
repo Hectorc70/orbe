@@ -21,6 +21,9 @@ const COMMISSION_RATE = 0.025; // 2.5%
 
 export default function SendPage() {
   const [amount, setAmount] = useState('');
+  const [recipientIdentifier, setRecipientIdentifier] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  
   
   const parsedAmount = parseFloat(amount) || 0;
   const commission = parsedAmount * COMMISSION_RATE;
@@ -84,19 +87,33 @@ export default function SendPage() {
             <TabsContent value="orbe_user" className="mt-6">
               <div className="space-y-2">
                 <Label htmlFor="recipientId">Recipient's Unique ID</Label>
-                <Input id="recipientId" placeholder="e.g., jane-doe-456" />
+                <Input
+                  id="recipientId"
+                  placeholder="e.g., jane-doe-456"
+                  value={recipientIdentifier}
+                  onChange={(e) => setRecipientIdentifier(e.target.value)}
+                />
               </div>
             </TabsContent>
             <TabsContent value="external_wallet" className="mt-6">
               <div className="space-y-2">
                  <Label htmlFor="walletAddress">Recipient's Wallet Address</Label>
-                 <Input id="walletAddress" placeholder="0x..." />
+                 <Input
+                   id="walletAddress"
+                   placeholder="0x..."
+                   value={recipientIdentifier}
+                   onChange={(e) => setRecipientIdentifier(e.target.value)}
+                 />
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
         <CardFooter className="pt-6">
-            <Button type="submit" className="w-full" disabled={totalDeducted <= 0 || totalDeducted > mockUser.balanceUSDC}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={totalDeducted <= 0 || totalDeducted > mockUser.balanceUSDC || isSending}
+            >
                 Send USDC
                 <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
