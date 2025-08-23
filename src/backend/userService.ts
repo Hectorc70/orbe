@@ -35,12 +35,10 @@ const login = async (email: string, password: string): Promise<void> => {
       {
         email,
         password,
-      },{
-        withCredentials: true
       }
     )
-    const { token, id, ...userData } = response.data;
-
+    const { token, id } = response.data.data;
+    debugger
     setCookie('auth-token', token, {
       maxAge: 60 * 60 * 24 * 7, // 7 días
       path: '/',
@@ -55,15 +53,6 @@ const login = async (email: string, password: string): Promise<void> => {
       sameSite: 'lax'
     });
 
-    // Opcional: guardar más datos del usuario
-    if (userData.role) {
-      setCookie('user-role', userData.role, {
-        maxAge: 60 * 60 * 24 * 7,
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
-      });
-    }
   } catch (e: any) {
     throw handleError(e)
   }
