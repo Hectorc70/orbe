@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link';
 import { ArrowUpRight, PlusCircle, ArrowDownToDot, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,10 +9,42 @@ import { Badge } from '@/components/ui/badge';
 import { mockTransactions, mockUser } from '@/lib/data';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { CANCELLED_REQUEST } from '@/backend/errors.util';
+import { useEffect, useState } from 'react';
+import { IUser } from '@/models/userModel';
+import ApiService, { getCookie } from '@/backend/userService';
+import { lsId, lsToken } from '@/common/constants';
+import { showToast } from 'nextjs-toast-notify';
+import { useGlobalStore } from '@/stores/useGlobalStore';
+import { useRouter } from 'next/navigation';
 
 const USDC_TO_MXN_RATE = 16.50;
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const { user, isAuthenticated } = useGlobalStore()
+  const updateUser = useGlobalStore((state) => state.updateUser)
+
+  const init = async () => {
+    try {
+      const id = getCookie(lsId) || '';
+      const token = getCookie(lsToken) || '';
+      if (token === '' && !isAuthenticated) {
+        router.push('/')
+      }
+
+      const response = await ApiService.getUser(id)
+      updateUser(response)
+    } catch (error) {
+      if (error != CANCELLED_REQUEST) {
+        showToast.error(error?.toString?.() ?? 'Error desconocido');
+      }
+    }
+    return null;
+  }
+  useEffect(() => {
+    init()
+  }, [])
   const recentTransactions = mockTransactions.slice(0, 5);
   const balanceMXN = mockUser.balanceUSDC * USDC_TO_MXN_RATE;
 
@@ -35,7 +69,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${mockUser.balanceUSDC.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ${user && user!.balanceUSDC && user.balanceUSDC.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
               ~ ${balanceMXN.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
@@ -44,11 +78,11 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">USD Balance</CardTitle>
+            <CardTitle className="text-sm font-medium">Monad Balance</CardTitle>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${mockUser.balanceUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div className="text-2xl font-bold">${user && user!.balanceNative && user?.balanceNative.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Available to convert to USDC</p>
           </CardContent>
         </Card>
@@ -58,19 +92,19 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="flex-grow flex items-center">
             <div className="w-full grid grid-cols-3 gap-2">
-              <Button  variant="outline" size="sm" className="flex-col h-auto py-2">
+              <Button variant="outline" size="sm" className="flex-col h-auto py-2">
                 <Link href="/dashboard/send">
                   <ArrowUpRight className="h-5 w-5 mb-1" />
                   <span>Send</span>
                 </Link>
               </Button>
-              <Button  variant="outline" size="sm" className="flex-col h-auto py-2">
+              <Button variant="outline" size="sm" className="flex-col h-auto py-2">
                 <Link href="/dashboard/wallet">
                   <Download className="h-5 w-5 mb-1" />
                   <span>Receive</span>
                 </Link>
               </Button>
-              <Button  variant="outline" size="sm" className="flex-col h-auto py-2">
+              <Button variant="outline" size="sm" className="flex-col h-auto py-2">
                 <Link href="/dashboard/wallet">
                   <PlusCircle className="h-5 w-5 mb-1" />
                   <span>Add Funds</span>
@@ -88,7 +122,7 @@ export default function DashboardPage() {
               <CardTitle>Recent Transactions</CardTitle>
               <CardDescription>A list of your most recent transactions.</CardDescription>
             </div>
-            <Button  variant="outline" size="sm">
+            <Button variant="outline" size="sm">
               <Link href="/dashboard/transactions">View all</Link>
             </Button>
           </div>

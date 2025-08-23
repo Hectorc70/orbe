@@ -28,7 +28,7 @@ const createUser = async (data: IUser): Promise<void> => {
     delete controllers[key];
   }
 };
-const login = async (email: string, password: string): Promise<void> => {
+const login = async (email: string, password: string): Promise<string> => {
   try {
 
     const response = await axios.post(`${baseApi}/users/login/`,
@@ -38,21 +38,20 @@ const login = async (email: string, password: string): Promise<void> => {
       }
     )
     const { token, id } = response.data.data;
-    debugger
-    setCookie('auth-token', token, {
+    setCookie(lsToken, token, {
       maxAge: 60 * 60 * 24 * 7, // 7 días
       path: '/',
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax'
     });
 
-    setCookie('user-id', id.toString(), {
+    setCookie(lsId, id.toString(), {
       maxAge: 60 * 60 * 24 * 7,
       path: '/',
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax'
     });
-
+    return id.toString();
   } catch (e: any) {
     throw handleError(e)
   }
@@ -82,7 +81,7 @@ function setCookie(name: string, value: string, options: {
   document.cookie = cookieString;
 }
 
-function getCookie(name: string): string | null {
+export function getCookie(name: string): string | null {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
@@ -96,20 +95,21 @@ function deleteCookie(name: string, path = '/') {
 
 const getUser = async (idUser: string,): Promise<IUser> => {
   try {
-    const token = getCookie('auth-token');
+    const token = getCookie(lsToken)
     const response = await axios.get(`${baseApi}/users/get/${idUser}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
-        withCredentials: true,
       }
     )
+    const dataResult = response.data.data
     const data = {
-      username: response.data.username,
-      email: response.data.email,
-      password: response.data.password,
-      walletAddress: response.data.walletAddress.address
+      username: dataResult.user.username,
+      email: dataResult.user.email,
+      walletAddress: dataResult.user.walletAddress.address,
+      balanceUSDC: dataResult.balance,
+      balanceNative: dataResult.balanceNative
     }
     return data as IUser
   } catch (e: any) {

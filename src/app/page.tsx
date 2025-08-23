@@ -10,6 +10,7 @@ import { Logo } from '@/components/logo';
 import ApiService from '@/backend/userService';
 import { CANCELLED_REQUEST } from '@/backend/errors.util';
 import FormInput from '@/components/ui/inputForm';
+import { useGlobalStore } from '@/stores/useGlobalStore';
 
 type FormValues = {
   email: string;
@@ -17,6 +18,7 @@ type FormValues = {
 };
 
 export default function LoginPage() {
+  const setUser = useGlobalStore((state) => state.setUser)
   const router = useRouter();
   const {
     register,
@@ -27,6 +29,9 @@ export default function LoginPage() {
   const onSubmit = async (data: FormValues) => {
     try {
       const response = await ApiService.login(data.email, data.password);
+      const user = await ApiService.getUser(response)
+      debugger
+      setUser(user)
       showToast.success('Login exitoso');
       router.push('/dashboard');
     } catch (error: any) {
