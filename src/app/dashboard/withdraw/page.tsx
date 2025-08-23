@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { mockUser } from '@/lib/data';
-import { ArrowRight, Banknote } from 'lucide-react';
+import { ArrowRight, Banknote, Wallet } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const USDC_TO_MXN_RATE = 16.50;
@@ -16,15 +16,16 @@ export default function WithdrawPage() {
         <Card className="w-full max-w-2xl">
             <CardHeader>
                 <CardTitle>Withdraw Funds</CardTitle>
-                <CardDescription>Convert your USDC to MXN and send it to your bank account.</CardDescription>
+                <CardDescription>Convert your USDC to MXN or send it to an external wallet.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Tabs defaultValue="withdraw" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
+                <Tabs defaultValue="withdraw_mxn" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="withdraw_mxn">To MXN Bank</TabsTrigger>
+                         <TabsTrigger value="external_wallet">External Wallet</TabsTrigger>
                         <TabsTrigger value="add_account">Add Bank Account</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="withdraw">
+                    <TabsContent value="withdraw_mxn">
                         <form className="space-y-6 mt-6">
                             <div className="space-y-2">
                                 <Label htmlFor="amount">Amount to Withdraw (USDC)</Label>
@@ -65,6 +66,18 @@ export default function WithdrawPage() {
                             </Button>
                         </form>
                     </TabsContent>
+                    <TabsContent value="external_wallet">
+                         <div className="mt-6 flex flex-col items-center text-center">
+                            <div className="flex-shrink-0 w-16 h-16 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-4">
+                                <Wallet className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-lg font-semibold">Withdraw to an External Wallet</h3>
+                            <p className="text-muted-foreground mt-1 max-w-md">
+                                Connect your preferred crypto wallet to securely withdraw your USDC balance.
+                            </p>
+                            <Button size="lg" className="mt-6">Connect Wallet</Button>
+                         </div>
+                    </TabsContent>
                     <TabsContent value="add_account">
                          <form className="space-y-6 mt-6">
                             <div className="space-y-2">
@@ -90,4 +103,3 @@ export default function WithdrawPage() {
     </div>
   );
 }
-
