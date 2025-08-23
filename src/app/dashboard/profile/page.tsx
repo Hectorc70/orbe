@@ -76,7 +76,7 @@ export default function ProfilePage() {
         </CardContent>
         {mockUser.kycStatus === 'Unverified' && (
             <CardFooter className="border-t pt-4">
-                <Button asChild>
+                <Button>
                   <Link href="/dashboard/kyc">Start Verification Process</Link>
                 </Button>
             </CardFooter>
