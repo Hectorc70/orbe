@@ -15,20 +15,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { mockUser } from "@/lib/data"
+import { ChevronDown } from "lucide-react";
 
 export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+        <Button variant="ghost" className="flex items-center gap-2 p-2 h-auto">
           <Avatar className="h-9 w-9">
             <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt={mockUser.name} />
             <AvatarFallback>{mockUser.name.charAt(0)}</AvatarFallback>
           </Avatar>
+           <div className="hidden md:flex flex-col items-start">
+            <span className="text-sm font-medium">{mockUser.name}</span>
+            <span className="text-xs text-muted-foreground font-mono">{mockUser.uniqueId}</span>
+          </div>
+          <ChevronDown className="h-4 w-4 hidden md:block text-muted-foreground"/>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
+        <DropdownMenuLabel className="font-normal md:hidden">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{mockUser.name}</p>
             <p className="text-xs leading-none text-muted-foreground">
@@ -36,7 +42,7 @@ export function UserNav() {
             </p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="md:hidden"/>
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link href="/dashboard/profile">Profile</Link>

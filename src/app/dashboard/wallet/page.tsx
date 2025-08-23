@@ -56,9 +56,9 @@ export default function WalletPage() {
                     <Banknote className="h-6 w-6" />
                 </div>
                 <div>
-                    <CardTitle>Receive Funds in Orbe Lite</CardTitle>
+                    <CardTitle>Receive Funds in Orbe</CardTitle>
                     <CardDescription>
-                    Share your Unique ID with other Orbe Lite users to receive USDC.
+                    Share your Unique ID with other Orbe users to receive USDC.
                     </CardDescription>
                 </div>
             </div>
