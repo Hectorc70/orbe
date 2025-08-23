@@ -16,16 +16,40 @@ import { mockUser } from '@/lib/data';
 import { ArrowRight, Wallet } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useGlobalStore } from '@/stores/useGlobalStore';
+import ApiService, { getCookie } from '@/backend/userService';
+import { lsId, lsToken } from '@/common/constants';
+import { CANCELLED_REQUEST } from '@/backend/errors.util';
+import { showToast } from 'nextjs-toast-notify';
 
 const COMMISSION_RATE = 0.025; // 2.5%
 
 export default function SendPage() {
+  const { user, isAuthenticated } = useGlobalStore()
   const [amount, setAmount] = useState('');
   const [recipientIdentifier, setRecipientIdentifier] = useState('');
   const [isSending, setIsSending] = useState(false);
   const parsedAmount = parseFloat(amount) || 0;
   const commission = parsedAmount * COMMISSION_RATE;
   const totalDeducted = parsedAmount + commission;
+  const updateUser = useGlobalStore((state) => state.updateUser)
+
+  const init = async () => {
+    try {
+      const token = getCookie(lsToken) || '';
+      if (token === '' && !isAuthenticated) {
+        // router.push('/')
+      }
+
+      const response = await ApiService.getUser()
+      updateUser(response)
+    } catch (error) {
+      if (error != CANCELLED_REQUEST) {
+        showToast.error(error?.toString?.() ?? 'Error desconocido');
+      }
+    }
+    return null;
+  }
 
   return (
     <div className="flex justify-center items-start pt-10">
@@ -54,7 +78,7 @@ export default function SendPage() {
                 />
               </div>
               <p className="text-xs text-muted-foreground pt-1">
-                Available balance: ${mockUser.balanceUSDC.toLocaleString()} USDC
+                Available balance: ${user && user.balanceUSDC && user.balanceUSDC.toLocaleString()} USDC
               </p>
             </div>
 
@@ -95,26 +119,26 @@ export default function SendPage() {
             </TabsContent>
             <TabsContent value="external_wallet" className="mt-6">
               <div className="space-y-2">
-                 <Label htmlFor="walletAddress">Recipient's Wallet Address</Label>
-                 <Input
-                   id="walletAddress"
-                   placeholder="0x..."
-                   value={recipientIdentifier}
-                   onChange={(e) => setRecipientIdentifier(e.target.value)}
-                 />
+                <Label htmlFor="walletAddress">Recipient's Wallet Address</Label>
+                <Input
+                  id="walletAddress"
+                  placeholder="0x..."
+                  value={recipientIdentifier}
+                  onChange={(e) => setRecipientIdentifier(e.target.value)}
+                />
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
         <CardFooter className="pt-6">
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={totalDeducted <= 0 || totalDeducted > mockUser.balanceUSDC || isSending}
-            >
-                Send USDC
-                <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={totalDeducted <= 0 || totalDeducted > mockUser.balanceUSDC || isSending}
+          >
+            Send USDC
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </CardFooter>
       </Card>
     </div>

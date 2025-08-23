@@ -93,10 +93,11 @@ function deleteCookie(name: string, path = '/') {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};`;
 }
 
-const getUser = async (idUser: string,): Promise<IUser> => {
+const getUser = async (): Promise<IUser> => {
   try {
+    const id = getCookie(lsId) || '';
     const token = getCookie(lsToken)
-    const response = await axios.get(`${baseApi}/users/get/${idUser}`,
+    const response = await axios.get(`${baseApi}/users/get/${id}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,

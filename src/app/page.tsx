@@ -28,8 +28,8 @@ export default function LoginPage() {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const response = await ApiService.login(data.email, data.password);
-      const user = await ApiService.getUser(response)
+      await ApiService.login(data.email, data.password);
+      const user = await ApiService.getUser()
       debugger
       setUser(user)
       showToast.success('Login exitoso');

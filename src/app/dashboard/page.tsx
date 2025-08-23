@@ -27,13 +27,12 @@ export default function DashboardPage() {
 
   const init = async () => {
     try {
-      const id = getCookie(lsId) || '';
       const token = getCookie(lsToken) || '';
       if (token === '' && !isAuthenticated) {
         router.push('/')
       }
 
-      const response = await ApiService.getUser(id)
+      const response = await ApiService.getUser()
       updateUser(response)
     } catch (error) {
       if (error != CANCELLED_REQUEST) {
