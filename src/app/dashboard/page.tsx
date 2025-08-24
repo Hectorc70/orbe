@@ -66,7 +66,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center gap-2 mb-2">
               <Wallet className="h-5 w-5 opacity-90" />
-              <span className="text-sm opacity-90">Balance Principal</span>
+              <span className="text-sm opacity-90">Principal Balance</span>
             </div>
             <div className="space-y-1">
               <div className="text-3xl md:text-4xl font-bold">
@@ -98,7 +98,7 @@ export default function DashboardPage() {
       {/* Quick Actions - Mobile optimized */}
       <Card className="shadow-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Acciones Rápidas</CardTitle>
+          <CardTitle className="text-lg">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="pb-6">
           <div className="grid grid-cols-3 gap-3">
@@ -107,7 +107,7 @@ export default function DashboardPage() {
                 <div className="p-3 bg-blue-500 rounded-full">
                   <ArrowUpRight className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-sm font-medium text-blue-700">Enviar</span>
+                <span className="text-sm font-medium text-blue-700">Send</span>
               </div>
             </Link>
 
@@ -116,7 +116,7 @@ export default function DashboardPage() {
                 <div className="p-3 bg-green-500 rounded-full">
                   <Download className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-sm font-medium text-green-700">Recibir</span>
+                <span className="text-sm font-medium text-green-700">Receive</span>
               </div>
             </Link>
 
@@ -125,7 +125,7 @@ export default function DashboardPage() {
                 <div className="p-3 bg-purple-500 rounded-full">
                   <PlusCircle className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-sm font-medium text-purple-700">Agregar</span>
+                <span className="text-sm font-medium text-purple-700">Deposit</span>
               </div>
             </Link>
           </div>
@@ -137,12 +137,12 @@ export default function DashboardPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg">Transacciones Recientes</CardTitle>
-              <CardDescription className="text-sm">Tus últimos movimientos</CardDescription>
+              <CardTitle className="text-lg">Transacctions</CardTitle>
+              <CardDescription className="text-sm">Last transactions</CardDescription>
             </div>
             <Link href="/dashboard/transactions">
               <Button variant="ghost" size="sm" className="text-blue-600">
-                Ver todas
+                View all
                 <ArrowUpRight className="h-4 w-4 ml-1" />
               </Button>
             </Link>
@@ -194,11 +194,11 @@ export default function DashboardPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Contraparte</TableHead>
-                  <TableHead className="text-right">Cantidad (USDC)</TableHead>
-                  <TableHead>Fecha</TableHead>
-                  <TableHead>Estado</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Counterparty</TableHead>
+                  <TableHead className="text-right">Amount (USDC)</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -220,6 +220,6 @@ export default function DashboardPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </div >
   );
 }
