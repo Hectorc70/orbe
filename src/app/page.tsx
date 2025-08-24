@@ -32,7 +32,6 @@ export default function LoginPage() {
       const user = await ApiService.getUser()
       debugger
       setUser(user)
-      showToast.success('Login exitoso');
       router.push('/dashboard');
     } catch (error: any) {
       if (error !== CANCELLED_REQUEST) {
