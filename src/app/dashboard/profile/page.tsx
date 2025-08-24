@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,6 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { mockUser } from '@/lib/data';
 import { CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useGlobalStore } from '@/stores/useGlobalStore';
+import ApiService from '@/backend/userService';
+import { CANCELLED_REQUEST } from '@/backend/errors.util';
+import { showToast } from 'nextjs-toast-notify';
+import { useEffect } from 'react';
 
 const kycComponents = {
   Verified: {
@@ -32,8 +39,24 @@ const kycComponents = {
 };
 
 export default function ProfilePage() {
-  const kycInfo = kycComponents[mockUser.kycStatus];
+  const { user, isAuthenticated } = useGlobalStore()
+  const updateUser = useGlobalStore((state) => state.updateUser)
 
+  const kycInfo = kycComponents[mockUser.kycStatus];
+  const init = async () => {
+    try {
+      const response = await ApiService.getUser()
+      updateUser(response)
+    } catch (error) {
+      if (error != CANCELLED_REQUEST) {
+        showToast.error(error?.toString?.() ?? 'Error desconocido');
+      }
+    }
+    return null;
+  }
+  useEffect(() => {
+    init()
+  }, [])
   return (
     <div className="grid gap-6">
       <Card>
@@ -45,23 +68,23 @@ export default function ProfilePage() {
           <form className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" defaultValue={mockUser.name} />
+              <Input id="name" defaultValue={user?.username} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" defaultValue={mockUser.email} disabled />
+              <Input id="email" type="email" defaultValue={user?.email} disabled />
             </div>
             <div className="space-y-2">
               <Label htmlFor="uniqueId">Unique ID</Label>
-              <Input id="uniqueId" defaultValue={mockUser.uniqueId} disabled />
+              <Input id="uniqueId" defaultValue={user?.id} disabled />
             </div>
           </form>
         </CardContent>
-        <CardFooter className="border-t px-6 py-4">
+        {/* <CardFooter className="border-t px-6 py-4">
           <Button>Save Changes</Button>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>Identity Verification (KYC)</CardTitle>
@@ -75,11 +98,11 @@ export default function ProfilePage() {
           </div>
         </CardContent>
         {mockUser.kycStatus === 'Unverified' && (
-            <CardFooter className="border-t pt-4">
-                <Button>
-                  <Link href="/dashboard/kyc">Start Verification Process</Link>
-                </Button>
-            </CardFooter>
+          <CardFooter className="border-t pt-4">
+            <Button>
+              <Link href="/dashboard/kyc">Start Verification Process</Link>
+            </Button>
+          </CardFooter>
         )}
       </Card>
     </div>

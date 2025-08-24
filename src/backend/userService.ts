@@ -106,6 +106,7 @@ const getUser = async (): Promise<IUser> => {
     )
     const dataResult = response.data.data
     const data = {
+      id: dataResult.user._id,
       username: dataResult.user.username,
       email: dataResult.user.email,
       walletAddress: dataResult.user.walletAddress.address,
