@@ -24,7 +24,8 @@ import { showToast } from 'nextjs-toast-notify';
 import { useForm } from 'react-hook-form';
 import FormInput from '@/components/ui/inputForm';
 type FormValues = {
-  email: string;
+  sender: string;
+  wallet: string;
   amount: number;
 };
 const COMMISSION_RATE = 0.025; // 2.5%
@@ -34,6 +35,7 @@ export default function SendPage() {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
   const { user, isAuthenticated } = useGlobalStore()
@@ -45,11 +47,14 @@ export default function SendPage() {
   const totalDeducted = parsedAmount + commission;
   const updateUser = useGlobalStore((state) => state.updateUser)
   const amountWatch = watch('amount');
-  const emailWatch = watch('email');
+  const emailWatch = watch('sender');
+  const walletWatch = watch('wallet')
   const [disabled, setDisabled] = useState(true);
+  const [tab, setTab] = useState<'orbe_user' | 'external_wallet'>('orbe_user');
 
   const validateButton = () => {
-    if (emailWatch === '' || isNaN(amountWatch)) {
+    const to = tab === 'orbe_user' ? emailWatch : walletWatch
+    if (to === '' || isNaN(amountWatch)) {
       setDisabled(true);
     } else {
       const amountbalance = user && user.balanceUSDC && parseFloat(user?.balanceUSDC.toString()) || 0;
@@ -92,9 +97,13 @@ export default function SendPage() {
   useEffect(() => {
     validateButton()
   }, [emailWatch])
+  useEffect(() => {
+    validateButton()
+  }, [walletWatch])
   const onSubmit = async (data: FormValues) => {
     try {
-      const recipientIdentifier = data.email
+      const typeSend = tab === 'orbe_user' ? 1 : 0
+      const recipientIdentifier = typeSend === 1 ? data.sender : data.wallet
       const amount = data.amount
       if (recipientIdentifier === user?.walletAddress) {
         showToast.error('You cannot send funds to your own wallet');
@@ -109,10 +118,12 @@ export default function SendPage() {
         return
       }
       setIsSending(true);
-      await ApiService.sendUSDC(recipientIdentifier, amount, 1);
-      setIsSending(false);
-      showToast.success('Funds sent successfully');
+
+      await ApiService.sendUSDC(recipientIdentifier, amount, typeSend);
       await init();
+      setIsSending(false);
+      showToast.success('Funds sent successfully',{position: 'top-center'});
+      reset();
     } catch (error) {
       if (error != CANCELLED_REQUEST) {
         showToast.error(error?.toString?.() ?? 'Error desconocido', {
@@ -125,7 +136,7 @@ export default function SendPage() {
     }
   }
   return (
-    <div className="flex justify-center items-start pt-10">
+    <div className="flex justify-center items-start pt-10" >
       <Card className="w-full max-w-lg">
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
 
@@ -174,7 +185,7 @@ export default function SendPage() {
             )}
 
 
-            <Tabs defaultValue="orbe_user" className="w-full mt-6">
+            <Tabs defaultValue={tab} className="w-full mt-6" value={tab} onValueChange={(v) => setTab(v as 'orbe_user' | 'external_wallet')}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="orbe_user">To Orbe User</TabsTrigger>
                 <TabsTrigger value="external_wallet">External Wallet</TabsTrigger>
@@ -182,29 +193,30 @@ export default function SendPage() {
               <TabsContent value="orbe_user" className="mt-6">
                 <FormInput
                   label="Recipient's Email"
-                  name="email"
+                  name="sender"
                   type="email"
                   placeholder="email@example.com"
-                  register={register('email', {
-                    required: 'Email is required',
+                  register={register('sender', {
+                    required: '',
                     pattern: {
                       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                       message: 'Invalid email format',
                     }
                   })}
-                  error={errors.email}
+                  error={errors.sender}
                 />
               </TabsContent>
               <TabsContent value="external_wallet" className="mt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="walletAddress">Recipient's Wallet Address</Label>
-                  <Input
-                    id="walletAddress"
-                    placeholder="0x..."
-                    value={recipientIdentifier}
-                    onChange={(e) => setRecipientIdentifier(e.target.value)}
-                  />
-                </div>
+                <FormInput
+                  label="Wallet's Address"
+                  name="wallet"
+                  type="text"
+                  placeholder="0x0...0"
+                  register={register('wallet', {
+                    required: 'Wallet address is required',
+                  })}
+                  error={errors.wallet}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>
