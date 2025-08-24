@@ -22,7 +22,7 @@ export default function WalletPage() {
     { label: 'Routing Number', value: '021000021' },
     { label: 'Account Number', value: '892345712' },
     { label: 'Account Type', value: 'Checking' },
-    { label: 'Beneficiary Name', value: mockUser.name },
+    { label: 'Beneficiary Name', value: '--' },
   ]);
   const init = async () => {
     try {
