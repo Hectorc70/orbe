@@ -91,6 +91,7 @@ export default function SendPage() {
       setCommission(commission);
       const totalDeducted = parsedAmount + commission;
       setTotalDeducted(totalDeducted);
+      validateButton()
     }
   }, [amountWatch])
   useEffect(() => {
