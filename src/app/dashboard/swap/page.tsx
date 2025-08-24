@@ -10,12 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { mockUser } from '@/lib/data';
-import { ArrowRight, Wallet } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGlobalStore } from '@/stores/useGlobalStore';
 import ApiService, { getCookie } from '@/backend/userService';
 import { lsToken } from '@/common/constants';
@@ -119,7 +115,7 @@ export default function SwapPage() {
           <CardHeader>
             <CardTitle>Swap Funds</CardTitle>
             <CardDescription>
-              Convert your Monad tokens to USDC.
+              Convert your Monad tokens to USDC at a 1:1 rate. Swapped tokens will be available immediately in your wallet balance.
             </CardDescription>
           </CardHeader>
           <CardContent>
