@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link';
-import { ArrowUpRight, PlusCircle, ArrowDownToDot, Download } from 'lucide-react';
+import { ArrowUpRight, PlusCircle, ArrowDownToDot, Download, TrendingUp, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -59,100 +59,165 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">USDC Balance</CardTitle>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v4m0 4v2"></path></svg>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              ${user && user!.balanceUSDC && user.balanceUSDC.toLocaleString()}
+    <div className="flex flex-col gap-4 px-4 md:px-6">
+      {/* Header Balance Section - Mobile First */}
+      <div className="space-y-4">
+        <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white border-0 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2 mb-2">
+              <Wallet className="h-5 w-5 opacity-90" />
+              <span className="text-sm opacity-90">Balance Principal</span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              ~ ${balanceMXN.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
-            </p>
+            <div className="space-y-1">
+              <div className="text-3xl md:text-4xl font-bold">
+                ${user && user!.balanceUSDC && user.balanceUSDC.toLocaleString()} USDC
+              </div>
+              <div className="text-lg opacity-90">
+                ${balanceMXN.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
+              </div>
+            </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monad Balance</CardTitle>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${user && user!.balanceNative && user?.balanceNative.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Available to convert to USDC</p>
-          </CardContent>
-        </Card>
-        <Card className="flex flex-col">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-grow flex items-center">
-            <div className="w-full grid grid-cols-3 gap-2">
-              <Button variant="outline" size="sm" className="flex-col h-auto py-2">
-                <Link href="/dashboard/send">
-                  <ArrowUpRight className="h-5 w-5 mb-1" />
-                  <span>Send</span>
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" className="flex-col h-auto py-2">
-                <Link href="/dashboard/wallet">
-                  <Download className="h-5 w-5 mb-1" />
-                  <span>Receive</span>
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" className="flex-col h-auto py-2">
-                <Link href="/dashboard/wallet">
-                  <PlusCircle className="h-5 w-5 mb-1" />
-                  <span>Add Funds</span>
-                </Link>
-              </Button>
+
+        {/* Monad Balance - Smaller card */}
+        <Card className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                <span className="text-sm">Monad Balance</span>
+              </div>
+              <div className="text-xl font-semibold">
+                ${user && user!.balanceNative && user?.balanceNative.toLocaleString()}
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Quick Actions - Mobile optimized */}
+      <Card className="shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Acciones Rápidas</CardTitle>
+        </CardHeader>
+        <CardContent className="pb-6">
+          <div className="grid grid-cols-3 gap-3">
+            <Link href="/dashboard/send" className="block">
+              <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors">
+                <div className="p-3 bg-blue-500 rounded-full">
+                  <ArrowUpRight className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-sm font-medium text-blue-700">Enviar</span>
+              </div>
+            </Link>
+
+            <Link href="/dashboard/wallet" className="block">
+              <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-colors">
+                <div className="p-3 bg-green-500 rounded-full">
+                  <Download className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-sm font-medium text-green-700">Recibir</span>
+              </div>
+            </Link>
+
+            <Link href="/dashboard/wallet" className="block">
+              <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-colors">
+                <div className="p-3 bg-purple-500 rounded-full">
+                  <PlusCircle className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-sm font-medium text-purple-700">Agregar</span>
+              </div>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Transactions Section - Mobile optimized */}
+      <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Recent Transactions</CardTitle>
-              <CardDescription>A list of your most recent transactions.</CardDescription>
+              <CardTitle className="text-lg">Transacciones Recientes</CardTitle>
+              <CardDescription className="text-sm">Tus últimos movimientos</CardDescription>
             </div>
-            <Button variant="outline" size="sm">
-              <Link href="/dashboard/transactions">View all</Link>
-            </Button>
+            <Link href="/dashboard/transactions">
+              <Button variant="ghost" size="sm" className="text-blue-600">
+                Ver todas
+                <ArrowUpRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Type</TableHead>
-                <TableHead>Counterparty</TableHead>
-                <TableHead className="text-right">Amount (USDC)</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recentTransactions.map((tx) => (
-                <TableRow key={tx.id}>
-                  <TableCell className="font-medium capitalize">{tx.type}</TableCell>
-                  <TableCell>{tx.type === 'sent' ? tx.to : tx.from}</TableCell>
-                  <TableCell className={cn("text-right font-mono", tx.type === 'received' || tx.type === 'top-up' ? 'text-green-600' : 'text-red-600')}>
-                    {tx.type === 'received' || tx.type === 'top-up' ? '+' : '-'} ${tx.amountUSDC.toFixed(2)}
-                  </TableCell>
-                  <TableCell>{format(new Date(tx.date), 'MMM d, yyyy')}</TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusBadgeVariant(tx.status)}>{tx.status}</Badge>
-                  </TableCell>
+        <CardContent className="px-0">
+          {/* Mobile: Card-based layout */}
+          <div className="block md:hidden space-y-3 px-6">
+            {recentTransactions.map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "p-2 rounded-full",
+                    tx.type === 'received' || tx.type === 'top-up' ? 'bg-green-100' : 'bg-red-100'
+                  )}>
+                    <ArrowUpRight className={cn(
+                      "h-4 w-4",
+                      tx.type === 'received' || tx.type === 'top-up' ? 'text-green-600 rotate-180' : 'text-red-600'
+                    )} />
+                  </div>
+                  <div>
+                    <div className="font-medium text-sm capitalize">{tx.type === 'sent' ? 'Enviado' : tx.type === 'received' ? 'Recibido' : 'Recarga'}</div>
+                    <div className="text-xs text-gray-500">
+                      {tx.type === 'sent' ? `A ${tx.to}` : `De ${tx.from}`}
+                    </div>
+                    <div className="text-xs text-gray-400">{format(new Date(tx.date), 'MMM d')}</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className={cn(
+                    "font-semibold text-sm",
+                    tx.type === 'received' || tx.type === 'top-up' ? 'text-green-600' : 'text-red-600'
+                  )}>
+                    {tx.type === 'received' || tx.type === 'top-up' ? '+' : '-'}${tx.amountUSDC.toFixed(2)}
+                  </div>
+                  <Badge
+                    variant={getStatusBadgeVariant(tx.status)}
+                    className="text-xs mt-1"
+                  >
+                    {tx.status === 'Completed' ? 'Completado' : tx.status === 'Pending' ? 'Pendiente' : 'Fallido'}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: Table layout */}
+          <div className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Contraparte</TableHead>
+                  <TableHead className="text-right">Cantidad (USDC)</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Estado</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {recentTransactions.map((tx) => (
+                  <TableRow key={tx.id}>
+                    <TableCell className="font-medium capitalize">{tx.type}</TableCell>
+                    <TableCell>{tx.type === 'sent' ? tx.to : tx.from}</TableCell>
+                    <TableCell className={cn("text-right font-mono", tx.type === 'received' || tx.type === 'top-up' ? 'text-green-600' : 'text-red-600')}>
+                      {tx.type === 'received' || tx.type === 'top-up' ? '+' : '-'} ${tx.amountUSDC.toFixed(2)}
+                    </TableCell>
+                    <TableCell>{format(new Date(tx.date), 'MMM d, yyyy')}</TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusBadgeVariant(tx.status)}>{tx.status}</Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
