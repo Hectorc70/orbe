@@ -161,12 +161,40 @@ const sendUSDC = async (send_to: string, amount: number, typeSend: number): Prom
     delete controllers[key];
   }
 }
+
+const swapNative = async (amount: number): Promise<void> => {
+  //TypeSend // 0 = external, 1 = internal
+  const key = `swapNative-${amount}`;
+  const signal = createAbortableRequest(key);
+  try {
+    const token = getCookie(lsToken)
+    await axios.post(`${baseApi}/transactions/swap/`, {
+      amount,
+    },
+      {
+        signal,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    )
+
+  } catch (e: any) {
+    if (axios.isCancel(e) || e.name === "CanceledError" || e.name === "AbortError") {
+      return Promise.reject(CANCELLED_REQUEST);
+    }
+    throw handleError(e);
+  } finally {
+    delete controllers[key];
+  }
+}
 const ApiService = {
   createUser,
   login,
   getUser,
   logout,
-  sendUSDC
+  sendUSDC,
+  swapNative
 }
 
 export default ApiService

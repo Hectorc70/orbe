@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ArrowDownToDot, ArrowRightLeft, History, LayoutDashboard, User, Wallet } from 'lucide-react';
+import { ArrowDownToDot, ArrowRightLeft, History, LayoutDashboard, User, Wallet,RefreshCcw } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import {
   Sidebar,
@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/dashboard/send', icon: ArrowRightLeft, label: 'Send Funds' },
+  { href: '/dashboard/swap', icon: RefreshCcw, label: 'Swap' },
   { href: '/dashboard/withdraw', icon: ArrowDownToDot, label: 'Withdraw Funds' },
   { href: '/dashboard/transactions', icon: History, label: 'Transactions' },
   { href: '/dashboard/wallet', icon: Wallet, label: 'Wallet' },
