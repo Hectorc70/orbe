@@ -33,7 +33,13 @@ export default function WalletPage() {
 
       const response = await ApiService.getUser()
       updateUser(response)
-      setDetail(accountDetails[4].value = response?.username)
+      setDetail(prev =>
+        prev.map(d =>
+          d.label === 'Beneficiary Name'
+            ? { ...d, value: response?.username ?? '' }
+            : d
+        )
+      );
     } catch (error) {
       if (error != CANCELLED_REQUEST) {
         showToast.error(error?.toString?.() ?? 'Error desconocido');
@@ -66,7 +72,7 @@ export default function WalletPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-3">
-            {accountDetails.map(detail => (
+            {accountDetails && accountDetails.map(detail => (
               <div key={detail.label} className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">{detail.label}</span>
                 <div className="flex items-center gap-2">
