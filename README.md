@@ -40,6 +40,7 @@ Orbe ofrece:
 ## 📲 Prueba la App
 Puedes descargar y probar la aplicación Orbe desde:
 https://orbe-mu.vercel.app/
+En los 3 puntos busca ver en pantalla principal para que se descargue y busca la aplicacion en tu celular (compatible en dispositivos android)
 
 ## 🙏 Agradecimientos
 - Equipo de **Monad Network** por su soporte técnico y ecosistema
