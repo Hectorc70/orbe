@@ -44,7 +44,7 @@ https://orbe-mu.vercel.app/
 ## 🙏 Agradecimientos
 - Equipo de **Monad Network** por su soporte técnico y ecosistema
 - Desarrolladores del protocolo **0x** por la infraestructura de swaps
-- Nuestra comunidad de **usuarios beta** por su invaluable feedback
+- Nuestra Mobile3 por hacer posible el hackaton de Monad en CDMX
 - Todos los **contribuidores** que han ayudado a hacer de Orbe una realidad
 
 ---
