@@ -44,7 +44,7 @@ export default function SendPage() {
   const [isSending, setIsSending] = useState(false);
   const parsedAmount = parseFloat(amount) || 0;
   const [commission, setCommission] = useState(0);
-  const totalDeducted = parsedAmount + commission;
+  const [totalDeducted, setTotalDeducted] = useState(0);
   const updateUser = useGlobalStore((state) => state.updateUser)
   const amountWatch = watch('amount');
   const emailWatch = watch('sender');
@@ -88,11 +88,12 @@ export default function SendPage() {
   }, [])
   useEffect(() => {
     if (amountWatch) {
+      const parsedAmount = parseFloat(amountWatch.toString());
       const commission = amountWatch * COMMISSION_RATE;
-      const totalDeducted = parsedAmount + commission;
       setAmount(parsedAmount.toFixed(2));
-      validateButton()
       setCommission(commission);
+      const totalDeducted = parsedAmount + commission;
+      setTotalDeducted(totalDeducted);
     }
   }, [amountWatch])
   useEffect(() => {
@@ -120,10 +121,10 @@ export default function SendPage() {
       }
       setIsSending(true);
 
-      await ApiService.sendUSDC(recipientIdentifier, amount, typeSend);
+      await ApiService.sendUSDC(recipientIdentifier, totalDeducted, typeSend);
       await init();
       setIsSending(false);
-      showToast.success('Funds sent successfully',{position: 'top-center'});
+      showToast.success('Funds sent successfully', { position: 'top-center' });
       reset();
     } catch (error) {
       if (error != CANCELLED_REQUEST) {
@@ -175,12 +176,12 @@ export default function SendPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Fee (2.5%)</span>
-                  <span>+ ${commission.toFixed(2)}</span>
+                  <span>+ ${commission}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-semibold">
                   <span>Total to be deducted</span>
-                  <span>${totalDeducted.toFixed(2)} USDC</span>
+                  <span>${totalDeducted} USDC</span>
                 </div>
               </div>
             )}
