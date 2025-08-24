@@ -43,7 +43,7 @@ export default function SendPage() {
   const [recipientIdentifier, setRecipientIdentifier] = useState('');
   const [isSending, setIsSending] = useState(false);
   const parsedAmount = parseFloat(amount) || 0;
-  const commission = parsedAmount * COMMISSION_RATE;
+  const [commission, setCommission] = useState(0);
   const totalDeducted = parsedAmount + commission;
   const updateUser = useGlobalStore((state) => state.updateUser)
   const amountWatch = watch('amount');
@@ -92,6 +92,7 @@ export default function SendPage() {
       const totalDeducted = parsedAmount + commission;
       setAmount(parsedAmount.toFixed(2));
       validateButton()
+      setCommission(commission);
     }
   }, [amountWatch])
   useEffect(() => {
@@ -166,11 +167,11 @@ export default function SendPage() {
               </p>
             </div>
 
-            {parsedAmount > 0 && (
+            {amountWatch > 0 && (
               <div className="space-y-3 rounded-lg border bg-secondary/50 p-4 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Amount to send</span>
-                  <span>${parsedAmount.toFixed(2)}</span>
+                  <span>${amountWatch}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Fee (2.5%)</span>
