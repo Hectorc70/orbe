@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link';
-import { ArrowUpRight, PlusCircle, ArrowDownToDot, Download, TrendingUp, Wallet } from 'lucide-react';
+import { ArrowUpRight, PlusCircle, ArrowDownToDot, Download, TrendingUp, Wallet, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -120,12 +120,12 @@ export default function DashboardPage() {
               </div>
             </Link>
 
-            <Link href="/dashboard/wallet" className="block">
+            <Link href="/dashboard/swap" className="block">
               <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-colors">
                 <div className="p-3 bg-purple-500 rounded-full">
-                  <PlusCircle className="h-6 w-6 text-white" />
+                  <RefreshCcw className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-sm font-medium text-purple-700">Deposit</span>
+                <span className="text-sm font-medium text-purple-700">Swap</span>
               </div>
             </Link>
           </div>
