@@ -213,7 +213,9 @@ export default function SendPage() {
                   type="text"
                   placeholder="0x0...0"
                   register={register('wallet', {
-                    required: 'Wallet address is required',
+                    required: {
+                      value: tab === 'external_wallet',
+                      message: 'Wallet address is required',},
                   })}
                   error={errors.wallet}
                 />
