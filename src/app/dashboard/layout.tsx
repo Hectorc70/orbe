@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ArrowDownToDot, ArrowRightLeft, History, LayoutDashboard, User, Wallet,RefreshCcw } from 'lucide-react';
+import { ArrowDownToDot, ArrowRightLeft, History, LayoutDashboard, User, Wallet, RefreshCcw } from 'lucide-react';
 import { Logo } from '@/components/logo';
+
 import {
   Sidebar,
   SidebarContent,
@@ -30,52 +31,68 @@ const navItems = [
 ];
 
 function DashboardHeader() {
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
-        <SidebarTrigger className="md:hidden"/>
-        <div className="w-full flex-1">
-        <SidebarTrigger className="hidden md:block"/>
-        </div>
+      <SidebarTrigger className="md:hidden" />
+      <div className="w-full flex-1">
+        <SidebarTrigger className="hidden md:block" />
+      </div>
       <UserNav />
     </header>
   );
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
   return (
     <SidebarProvider>
-        <div className="flex min-h-screen">
-            <Sidebar side="left" variant="sidebar" collapsible="icon">
-                <SidebarHeader className="flex items-center justify-between">
-                    <Logo />
-                    <div className="md:hidden">
-                    <SidebarTrigger />
-                    </div>
-                </SidebarHeader>
-                <SidebarContent>
-                    <SidebarMenu>
-                    {navItems.map((item) => (
-                        <SidebarMenuItem key={item.href}>
-                        <Link href={item.href}>
-                            <SidebarMenuButton isActive={pathname === item.href} tooltip={item.label}>
-                            <item.icon />
-                            <span>{item.label}</span>
-                            </SidebarMenuButton>
-                        </Link>
-                        </SidebarMenuItem>
-                    ))}
-                    </SidebarMenu>
-                </SidebarContent>
-            </Sidebar>
-            <div className='flex-1 flex flex-col'>
-                <DashboardHeader />
-                <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
-                    {children}
-                </main>
-            </div>
-        </div>
+      <DashboardContent>{children}</DashboardContent>
     </SidebarProvider>
+  );
+}
+
+function DashboardContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
+
+  const handleNavClick = () => {
+    setOpenMobile(false);
+  };
+
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar side="left" variant="sidebar" collapsible="icon">
+        <SidebarHeader className="flex items-center justify-between">
+          <Logo />
+          <div className="md:hidden">
+            <SidebarTrigger />
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarMenu>
+            {navItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <Link href={item.href}>
+                  <SidebarMenuButton
+                    isActive={pathname === item.href}
+                    tooltip={item.label}
+                    onClick={handleNavClick} // 👈 ahora sí funciona
+                  >
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarContent>
+      </Sidebar>
+      <div className="flex-1 flex flex-col">
+        <DashboardHeader />
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }
