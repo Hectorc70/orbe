@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -18,13 +18,24 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGlobalStore } from '@/stores/useGlobalStore';
 import ApiService, { getCookie } from '@/backend/userService';
-import { lsId, lsToken } from '@/common/constants';
+import { lsToken } from '@/common/constants';
 import { CANCELLED_REQUEST } from '@/backend/errors.util';
 import { showToast } from 'nextjs-toast-notify';
-
+import { useForm } from 'react-hook-form';
+import FormInput from '@/components/ui/inputForm';
+type FormValues = {
+  email: string;
+  amount: number;
+};
 const COMMISSION_RATE = 0.025; // 2.5%
 
 export default function SendPage() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>();
   const { user, isAuthenticated } = useGlobalStore()
   const [amount, setAmount] = useState('');
   const [recipientIdentifier, setRecipientIdentifier] = useState('');
@@ -33,7 +44,22 @@ export default function SendPage() {
   const commission = parsedAmount * COMMISSION_RATE;
   const totalDeducted = parsedAmount + commission;
   const updateUser = useGlobalStore((state) => state.updateUser)
+  const amountWatch = watch('amount');
+  const emailWatch = watch('email');
+  const [disabled, setDisabled] = useState(true);
 
+  const validateButton = () => {
+    if (emailWatch === '' || isNaN(amountWatch)) {
+      setDisabled(true);
+    } else {
+      const amountbalance = user && user.balanceUSDC && parseFloat(user?.balanceUSDC.toString()) || 0;
+      if (totalDeducted > amountbalance) {
+        setDisabled(true);
+      } else {
+        setDisabled(false);
+      }
+    }
+  }
   const init = async () => {
     try {
       const token = getCookie(lsToken) || '';
@@ -43,6 +69,7 @@ export default function SendPage() {
 
       const response = await ApiService.getUser()
       updateUser(response)
+      validateButton()
     } catch (error) {
       if (error != CANCELLED_REQUEST) {
         showToast.error(error?.toString?.() ?? 'Error desconocido');
@@ -51,32 +78,78 @@ export default function SendPage() {
     return null;
   }
 
+  useEffect(() => {
+    init()
+  }, [])
+  useEffect(() => {
+    if (amountWatch) {
+      const commission = amountWatch * COMMISSION_RATE;
+      const totalDeducted = parsedAmount + commission;
+      setAmount(parsedAmount.toFixed(2));
+      validateButton()
+    }
+  }, [amountWatch])
+  useEffect(() => {
+    validateButton()
+  }, [emailWatch])
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const recipientIdentifier = data.email
+      const amount = data.amount
+      if (recipientIdentifier === user?.walletAddress) {
+        showToast.error('You cannot send funds to your own wallet');
+        return
+      }
+      if (recipientIdentifier === '') {
+        showToast.error('Please enter a wallet address');
+        return
+      }
+      if (isNaN(amount)) {
+        showToast.error('Please enter an amount');
+        return
+      }
+      setIsSending(true);
+      await ApiService.sendUSDC(recipientIdentifier, amount, 1);
+      setIsSending(false);
+      showToast.success('Funds sent successfully');
+      await init();
+    } catch (error) {
+      if (error != CANCELLED_REQUEST) {
+        showToast.error(error?.toString?.() ?? 'Error desconocido', {
+          duration: 10000,
+          position: 'top-center',
+        });
+        setIsSending(false);
+      }
+
+    }
+  }
   return (
     <div className="flex justify-center items-start pt-10">
       <Card className="w-full max-w-lg">
-        <CardHeader>
-          <CardTitle>Send Funds</CardTitle>
-          <CardDescription>
-            Send USDC to another Orbe user or to an external crypto wallet. A 2.5% commission is applied to all sends.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+
+          <CardHeader>
+            <CardTitle>Send Funds</CardTitle>
+            <CardDescription>
+              Send USDC to another Orbe user or to an external crypto wallet. A 2.5% commission is applied to all sends.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount (USDC)</Label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
-                  $
-                </span>
-                <Input
-                  id="amount"
-                  type="number"
-                  placeholder="0.00"
-                  className="pl-7"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-              </div>
+              <FormInput
+                step="0.01"
+                label="Amount (USDC)"
+                type="number"
+                placeholder="0.00"
+                name="amount"
+                register={register('amount', {
+                  required: 'Amount is required',
+
+                })}
+                error={errors.amount}
+              />
+              {/* </div> */}
               <p className="text-xs text-muted-foreground pt-1">
                 Available balance: ${user && user.balanceUSDC && user.balanceUSDC.toLocaleString()} USDC
               </p>
@@ -99,47 +172,54 @@ export default function SendPage() {
                 </div>
               </div>
             )}
-          </div>
 
-          <Tabs defaultValue="orbe_user" className="w-full mt-6">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="orbe_user">To Orbe User</TabsTrigger>
-              <TabsTrigger value="external_wallet">External Wallet</TabsTrigger>
-            </TabsList>
-            <TabsContent value="orbe_user" className="mt-6">
-              <div className="space-y-2">
-                <Label htmlFor="recipientId">Recipient's Unique ID</Label>
-                <Input
-                  id="recipientId"
-                  placeholder="e.g., jane-doe-456"
-                  value={recipientIdentifier}
-                  onChange={(e) => setRecipientIdentifier(e.target.value)}
+
+            <Tabs defaultValue="orbe_user" className="w-full mt-6">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="orbe_user">To Orbe User</TabsTrigger>
+                <TabsTrigger value="external_wallet">External Wallet</TabsTrigger>
+              </TabsList>
+              <TabsContent value="orbe_user" className="mt-6">
+                <FormInput
+                  label="Recipient's Email"
+                  name="email"
+                  type="email"
+                  placeholder="email@example.com"
+                  register={register('email', {
+                    required: 'Email is required',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: 'Invalid email format',
+                    }
+                  })}
+                  error={errors.email}
                 />
-              </div>
-            </TabsContent>
-            <TabsContent value="external_wallet" className="mt-6">
-              <div className="space-y-2">
-                <Label htmlFor="walletAddress">Recipient's Wallet Address</Label>
-                <Input
-                  id="walletAddress"
-                  placeholder="0x..."
-                  value={recipientIdentifier}
-                  onChange={(e) => setRecipientIdentifier(e.target.value)}
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-        <CardFooter className="pt-6">
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={totalDeducted <= 0 || totalDeducted > mockUser.balanceUSDC || isSending}
-          >
-            Send USDC
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </CardFooter>
+              </TabsContent>
+              <TabsContent value="external_wallet" className="mt-6">
+                <div className="space-y-2">
+                  <Label htmlFor="walletAddress">Recipient's Wallet Address</Label>
+                  <Input
+                    id="walletAddress"
+                    placeholder="0x..."
+                    value={recipientIdentifier}
+                    onChange={(e) => setRecipientIdentifier(e.target.value)}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+          <CardFooter className="pt-6">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!isSending && disabled}
+              isLoading={isSending}
+            >
+              Send USDC
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );

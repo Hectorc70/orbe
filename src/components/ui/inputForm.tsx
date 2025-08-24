@@ -18,6 +18,7 @@ interface FormInputProps {
   functionButton?: () => void;
   value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  step?: string
 }
 
 
@@ -59,7 +60,8 @@ const FormInput: React.FC<FormInputProps> = ({
   button,
   functionButton,
   value,
-  onChange
+  onChange,
+  step
 }) => {
   return (
     <div className={`mb-4 flex ${type === 'checkbox' ? 'items-center justify-end  gap-2  flex-row-reverse' : 'flex-col'} ${className}`}>
@@ -68,6 +70,7 @@ const FormInput: React.FC<FormInputProps> = ({
       </label>
       <div className="relative">
         <input
+          step={step}
           id={name}
           type={type}
           placeholder={placeholder}

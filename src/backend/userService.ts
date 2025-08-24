@@ -129,11 +129,43 @@ const logout = async (): Promise<void> => {
     deleteCookie('user-id');
   }
 };
+
+
+
+const sendUSDC = async (send_to: string, amount: number, typeSend: number): Promise<void> => {
+  //TypeSend // 0 = external, 1 = internal
+  const key = `sendUSDC-${send_to}-${amount}-${typeSend}`;
+  const signal = createAbortableRequest(key);
+  try {
+    const token = getCookie(lsToken)
+    await axios.post(`${baseApi}/transactions/send/`, {
+      send_to,
+      amount,
+      typeSend
+    },
+      {
+        signal,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    )
+
+  } catch (e: any) {
+    if (axios.isCancel(e) || e.name === "CanceledError" || e.name === "AbortError") {
+      return Promise.reject(CANCELLED_REQUEST);
+    }
+    throw handleError(e);
+  } finally {
+    delete controllers[key];
+  }
+}
 const ApiService = {
   createUser,
   login,
   getUser,
-  logout
+  logout,
+  sendUSDC
 }
 
 export default ApiService
